@@ -11,12 +11,12 @@ fn main() -> Result<(), JwkError> {
 
     let (x, y) = extract_es256_coordinates(&ec_pem_data)?;
     let ec_jwk = JwkBuilder::new("EC")
-        .use_("sig")
-        .alg("ES256")
-        .kid("ecdsa-key-1")
-        .crv("P-256")
-        .x(&x)
-        .y(&y)
+        .set_key_use("sig")
+        .set_algorithm("ES256")
+        .set_key_id("ecdsa-key-1")
+        .set_curve_type("P-256")
+        .set_x_coordinate(&x)
+        .set_y_coordinate(&y)
         .build()?;
 
     // --- RSA KEY ---
@@ -25,11 +25,11 @@ fn main() -> Result<(), JwkError> {
 
     let (n_b64, e_b64) = extract_rsa_n_e(&rsa_pem_data)?;
     let rsa_jwk = JwkBuilder::new("RSA")
-        .use_("sig")
-        .alg("RS256")
-        .kid("rsa-key-1")
-        .n(&n_b64)
-        .e(&e_b64)
+        .set_key_use("sig")
+        .set_algorithm("RS256")
+        .set_key_id("rsa-key-1")
+        .set_modulus(&n_b64)
+        .set_exponent(&e_b64)
         .build()?;
 
     // --- Combine into JWKS ---

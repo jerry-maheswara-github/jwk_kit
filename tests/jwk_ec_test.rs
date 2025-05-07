@@ -6,12 +6,12 @@ mod tests {
     #[test]
     fn test_valid_ec_jwk() {
         let jwk = JwkBuilder::new("EC")
-            .use_("sig")
-            .alg("ES256")
-            .kid("ecdsa-key-1")
-            .crv("P-256")
-            .x("x_base64")
-            .y("y_base64")
+            .set_key_use("sig")
+            .set_algorithm("ES256")
+            .set_key_id("ecdsa-key-1")
+            .set_curve_type("P-256")
+            .set_x_coordinate("x_base64")
+            .set_y_coordinate("y_base64")
             .build()
             .expect("Should build valid EC JWK");
 
@@ -22,8 +22,8 @@ mod tests {
     #[test]
     fn test_invalid_ec_missing_coords() {
         let err = JwkBuilder::new("EC")
-            .crv("P-256")
-            .x("x_value")
+            .set_curve_type("P-256")
+            .set_x_coordinate("x_value")
             .build()
             .expect_err("Missing 'y' should cause error");
 

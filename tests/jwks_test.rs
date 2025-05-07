@@ -6,10 +6,10 @@ mod tests {
     #[test]
     fn test_build_valid_rsa_jwk() {
         let jwk = JwkBuilder::new("RSA")
-            .n("some-modulus")
-            .e("some-exponent")
-            .alg("RS256")
-            .kid("key-id")
+            .set_modulus("some-modulus")
+            .set_exponent("some-exponent")
+            .set_algorithm("RS256")
+            .set_key_id("key-id")
             .build();
 
         assert!(jwk.is_ok());
@@ -24,7 +24,7 @@ mod tests {
     #[test]
     fn test_build_rsa_missing_params() {
         let result = JwkBuilder::new("RSA")
-            .e("some-exponent")
+            .set_exponent("some-exponent")
             .build();
 
         assert!(matches!(result, Err(JwkError::MissingRsaParams)));
@@ -33,10 +33,10 @@ mod tests {
     #[test]
     fn test_build_valid_ec_jwk() {
         let jwk = JwkBuilder::new("EC")
-            .crv("P-256")
-            .x("x-coordinate")
-            .y("y-coordinate")
-            .alg("ES256")
+            .set_curve_type("P-256")
+            .set_x_coordinate("x-coordinate")
+            .set_y_coordinate("y-coordinate")
+            .set_algorithm("ES256")
             .build();
 
         assert!(jwk.is_ok());
@@ -51,8 +51,8 @@ mod tests {
     #[test]
     fn test_build_ec_missing_params() {
         let result = JwkBuilder::new("EC")
-            .x("x-coordinate")
-            .y("y-coordinate")
+            .set_x_coordinate("x-coordinate")
+            .set_y_coordinate("y-coordinate")
             .build();
 
         assert!(matches!(result, Err(JwkError::MissingEcParams)));
@@ -60,7 +60,7 @@ mod tests {
 
     #[test]
     fn test_build_unsupported_key_type() {
-        let result = JwkBuilder::new("OCT") // misalnya symmetric key
+        let result = JwkBuilder::new("OCT")
             .build();
 
         match result {

@@ -1,7 +1,7 @@
 use crate::error::JwkError;
 use serde::{Deserialize, Serialize};
 
-/// # Jwk
+/// # Representing a JSON Web Key (JWK)
 ///
 /// A struct representing a JSON Web Key (JWK). The `Jwk` struct holds the various components
 /// of a cryptographic key in a format that can be easily serialized into a JWK.
@@ -46,20 +46,21 @@ pub struct Jwk {
     pub d: Option<String>,
 }
 
-/// # Jwks
+/// Represents a JSON Web Key Set (JWKS).
 ///
-/// A struct representing a JSON Web Key Set (JWKS). A JWKS is a collection of `Jwk` objects,
-/// allowing for the management and exchange of multiple keys in a single document.
+/// The `Jwks` struct is a container for multiple `Jwk` objects, following the structure
+/// defined in [RFC 7517](https://datatracker.ietf.org/doc/html/rfc7517). It is commonly
+/// used to publish a set of public keys (e.g., in a JWKS endpoint `http://www.your-domain.com/.well-known/jwks.json`) for use in verifying
+/// JSON Web Tokens (JWTs) and other cryptographic operations.
 ///
-/// ## Key fields:
-/// - `keys`: A vector containing multiple `Jwk` objects. Each object represents an individual key
-///   within the key set.
+/// This struct can be serialized to and deserialized from JSON using Serde, making it easy
+/// to expose or consume JWKS-compliant key sets in web applications.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Jwks {
     pub keys: Vec<Jwk>,
 }
 
-/// # JwkBuilder
+/// # A builder for constructing a JSON Web Key (JWK).
 ///
 /// A builder struct to facilitate the creation of a `Jwk`. The builder pattern is used
 /// to construct a `Jwk` with various optional parameters that can be set during the process.
@@ -83,13 +84,7 @@ pub struct JwkBuilder {
 }
 
 impl JwkBuilder {
-    /// Creates a new builder instance for a `Jwk` with the specified key type.
-    ///
-    /// ## Parameters:
-    /// - `kty`: The type of key (e.g., "RSA", "EC").
-    ///
-    /// ## Returns:
-    /// - `JwkBuilder`: A new instance of `JwkBuilder`.
+    // Method setters tetap sama, mengembalikan &mut self
     pub fn new(kty: &str) -> Self {
         Self {
             kty: kty.to_string(),
@@ -105,63 +100,53 @@ impl JwkBuilder {
         }
     }
 
-    /// Sets the `use` field (key use) for the JWK.
-    pub fn use_(mut self, value: &str) -> Self {
+    pub fn set_key_use(&mut self, value: &str) -> &mut Self {
         self.use_ = Some(value.to_string());
         self
     }
 
-    /// Sets the `alg` field (algorithm) for the JWK.
-    pub fn alg(mut self, value: &str) -> Self {
+    pub fn set_algorithm(&mut self, value: &str) -> &mut Self {
         self.alg = Some(value.to_string());
         self
     }
 
-    /// Sets the `kid` field (key ID) for the JWK.
-    pub fn kid(mut self, value: &str) -> Self {
+    pub fn set_key_id(&mut self, value: &str) -> &mut Self {
         self.kid = Some(value.to_string());
         self
     }
 
-    /// Sets the `n` field (RSA modulus) for the JWK.
-    pub fn n(mut self, value: &str) -> Self {
+    pub fn set_modulus(&mut self, value: &str) -> &mut Self {
         self.n = Some(value.to_string());
         self
     }
 
-    /// Sets the `e` field (RSA exponent) for the JWK.
-    pub fn e(mut self, value: &str) -> Self {
+    pub fn set_exponent(&mut self, value: &str) -> &mut Self {
         self.e = Some(value.to_string());
         self
     }
 
-    /// Sets the `crv` field (curve type) for EC keys.
-    pub fn crv(mut self, value: &str) -> Self {
+    pub fn set_curve_type(&mut self, value: &str) -> &mut Self {
         self.crv = Some(value.to_string());
         self
     }
 
-    /// Sets the `x` field (EC x-coordinate) for the JWK.
-    pub fn x(mut self, value: &str) -> Self {
+    pub fn set_x_coordinate(&mut self, value: &str) -> &mut Self {
         self.x = Some(value.to_string());
         self
     }
 
-    /// Sets the `y` field (EC y-coordinate) for the JWK.
-    pub fn y(mut self, value: &str) -> Self {
+    pub fn set_y_coordinate(&mut self, value: &str) -> &mut Self {
         self.y = Some(value.to_string());
         self
     }
 
-    /// Sets the `d` field (private key) for the JWK.
-    pub fn d(mut self, value: &str) -> Self {
+    pub fn set_private_key(&mut self, value: &str) -> &mut Self {
         self.d = Some(value.to_string());
         self
     }
 
-    /// Builds and returns the `Jwk` struct.
-    /// This function checks if all required parameters are provided based on the key type.
-    pub fn build(self) -> Result<Jwk, JwkError> {
+    // Update build method to take a reference to `self`
+    pub fn build(&self) -> Result<Jwk, JwkError> {
         match self.kty.as_str() {
             "RSA" => {
                 if self.n.is_none() || self.e.is_none() {
@@ -177,23 +162,23 @@ impl JwkBuilder {
         }
 
         Ok(Jwk {
-            kty: self.kty,
-            use_: self.use_,
-            alg: self.alg,
-            kid: self.kid,
-            n: self.n,
-            e: self.e,
-            crv: self.crv,
-            x: self.x,
-            y: self.y,
-            d: self.d,
+            kty: self.kty.clone(),  // Need to clone here because `self` is a reference
+            use_: self.use_.clone(),
+            alg: self.alg.clone(),
+            kid: self.kid.clone(),
+            n: self.n.clone(),
+            e: self.e.clone(),
+            crv: self.crv.clone(),
+            x: self.x.clone(),
+            y: self.y.clone(),
+            d: self.d.clone(),
         })
     }
 }
 
 
 
-/// # create_jwks
+/// # Creates a JSON Web Key Set (JWKS) from a collection of individual JWKs.
 ///
 /// Creates a new `Jwks` (JSON Web Key Set) from a list of `Jwk` objects. This function
 /// aggregates individual keys into a set that can be serialized and shared in JWKS format.

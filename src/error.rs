@@ -1,5 +1,10 @@
-
-#[derive(Debug, thiserror::Error, PartialEq)]
+use thiserror::Error;
+/// Represents possible errors that can occur when working with JWK operations.
+///
+/// This enum captures various failure modes encountered during key parsing,
+/// encoding, decoding, or conversion operations within the `jwk_kit` library.
+/// It is designed to help developers handle errors gracefully and with clarity.
+#[derive(Debug, Error, PartialEq)]
 pub enum JwkError {
     #[error("Missing required RSA parameters: 'n' (modulus) and/or 'e' (exponent)")]
     MissingRsaParams,
