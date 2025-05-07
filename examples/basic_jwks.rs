@@ -1,6 +1,8 @@
 use std::fs;
+use jwk_kit::generator::ecdsa::extract_es256_coordinates;
+use jwk_kit::generator::rsa::extract_rsa_n_e;
+use jwk_kit::jwk::{create_jwks, JwkBuilder};
 use jwk_kit::error::JwkError;
-use jwk_kit::jwk::{create_jwks, extract_es256_coordinates, extract_rsa_n_e, JwkBuilder};
 
 fn main() -> Result<(), JwkError> {
     // --- EC KEY ---

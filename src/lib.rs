@@ -1,25 +1,24 @@
-//! # 🌐 jwk_kit
+//! # 🔐 jwk-kit
 //!
-//! **A lightweight, developer-friendly Rust library for handling JSON Web Keys (JWK)**  
-//! 
-//! jwk_kit is a lightweight, developer-friendly Rust library designed for handling JSON Web Keys (JWK). 
-//! It provides a simple and efficient way to generate, manage, and serialize cryptographic keys in the JWK format, 
-//! which is commonly used for securing APIs, OAuth2, JWT, and other web-based authentication protocols.
-//! 
-//! This library supports RSA and ECDSA (specifically ES256 with the P-256 curve) key generation and conversion to the standard JWK format. 
-//! With jwk_kit, you can easily create and manage cryptographic keys, export them to PEM format, 
-//! and ensure that your application is fully compliant with the JWK and JWKS standards.
+//! **A modern, lightweight, and developer-friendly Rust library for managing JSON Web Keys (JWKs).**
 //!
+//! `jwk-kit` simplifies working with JSON Web Keys (JWK) in Rust by offering a clean, efficient API for key generation, serialization, and conversion.  
+//! 
+//! Ideal for developers building secure APIs, implementing OAuth2, JWT, or other web-based authentication mechanisms.
+//!
+//! Whether you're managing a JWKS endpoint or handling tokens in your auth layer, `jwk-kit` helps you stay compliant, secure, and productive.
+//! 
 //! ---
 //!
 //! ## ✨ Features
 //!
-//! - ✅ Generate RSA key pairs (2048/4096 bits)
-//! - ✅ Generate ES256 (P-256) key pairs
-//! - ✅ Convert keys to JWK format
-//! - ✅ Base64URL-safe encoding (no padding)
-//! - ✅ Export keys in PEM (PKCS#8) format
-//! - ✅ Fully compliant with [RFC 7517](https://datatracker.ietf.org/doc/html/rfc7517)
+//! - Generate RSA key pairs (2048/4096 bits)
+//! - Generate ES256 (P-256) key pairs
+//! - Easy key generation and conversion to standard-compliant JWK format.
+//! - Base64URL-safe encoding (no padding)
+//! - Export keys in PEM (PKCS#8) format
+//! - Built with ergonomics in mind—minimal boilerplate, maximum clarity.
+//! - Fully compliant with [RFC 7517](https://datatracker.ietf.org/doc/html/rfc7517)
 //!
 //! ---
 //!
@@ -29,24 +28,53 @@
 //!
 //! ```toml
 //! [dependencies]
-//! jwk_kit = "0.1.0"
+//! jwk-kit = "0.1.0"
 //! ```
+//! 
 //! ---
 //! 
 //! ## 🚀 Usage Example
 //!
 //! ```rust
-//! use jwk_kit::generator::rsa::generate_rsa_keypair_pem;
-//! use jwk_kit::jwk::extract_rsa_n_e;
+//! use jwk_kit::generator::rsa::{extract_rsa_n_e, generate_rsa_keypair_pem};
+//! use jwk_kit::generator::ecdsa::{extract_es256_coordinates, generate_es256_keypair_pem};
+//! use jwk_kit::jwk::{create_jwks, JwkBuilder};
+//! use jwk_kit::error::JwkError;
 //! 
-//! fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! fn main() -> Result<(), JwkError> {
 //!     let (private_pem, public_pem) = generate_rsa_keypair_pem(2048)?;
-//!     println!("Private Key:\n{}", private_pem);
-//!     println!("Public Key:\n{}", public_pem);
+//!     println!("RSA Private Key:\n{}", private_pem);
+//!     println!("RSA Public Key:\n{}", public_pem);
 //! 
-//!     let (n, e) = extract_rsa_n_e(&public_pem)?;
-//!     println!("RSA modulus (n): \n{}", n);
-//!     println!("RSA exponent (e): \n{}", e);
+//!     let (n_b64, e_b64) = extract_rsa_n_e(&public_pem)?;
+//!     let rsa_jwk = JwkBuilder::new("RSA")
+//!         .use_("sig")
+//!         .alg("RS256")
+//!         .kid("rsa-key-1")
+//!         .n(&n_b64)
+//!         .e(&e_b64)
+//!         .build()?;
+//! 
+//!     let (private_pem, public_pem) = generate_es256_keypair_pem()?;
+//!     println!("ECDSA Private Key:\n{}", private_pem);
+//!     println!("ECDSA Public Key:\n{}", public_pem);
+//!     
+//!     let (x, y) = extract_es256_coordinates(&public_pem)?;
+//!     let ec_jwk = JwkBuilder::new("EC")
+//!         .use_("sig")
+//!         .alg("ES256")
+//!         .kid("ecdsa-key-1")
+//!         .crv("P-256")
+//!         .x(&x)
+//!         .y(&y)
+//!         .build()?;
+//! 
+//!     let jwks = create_jwks(vec![rsa_jwk, ec_jwk]);
+//! 
+//!     let jwks_json = serde_json::to_string_pretty(&jwks)
+//!         .map_err(|_| JwkError::UnsupportedKeyType("serialization failed".into()))?;
+//! 
+//!     println!("JWKS:\n{}", jwks_json);
 //! 
 //!     Ok(())
 //! }
@@ -69,8 +97,24 @@
 //!
 //! ## 🧑‍💻 Author
 //!
-//! Created by **[Jerry Maheswara]**  
-//! Built with ❤️ and Rust 🦀  
+//! Created and maintained by [Jerry Maheswara](https://github.com/jerry-maheswara-github).  
+//! Feel free to reach out for suggestions, issues, or improvements!
+//!
+//! ---
+//!
+//! ## ❤️ Built with Love in Rust
+//!
+//! This project is built with ❤️ using **Rust** — a systems programming language that is safe, fast, and concurrent. Rust is the perfect choice for building reliable and efficient applications.
+//!
+//! ---
+//!
+//! ## 👋 Contributing
+//!
+//! Pull requests, issues, and feedback are welcome!  
+//! If you find this crate useful, give it a ⭐ and share it with others in the Rust community.
+//!
+//! ---
+//! 
 
 /// # jwk
 ///

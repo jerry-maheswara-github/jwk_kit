@@ -1,7 +1,4 @@
 use crate::error::JwkError;
-use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
-use p256::{elliptic_curve::sec1::ToEncodedPoint, pkcs8::DecodePublicKey, PublicKey};
-use rsa::{traits::PublicKeyParts, RsaPublicKey};
 use serde::{Deserialize, Serialize};
 
 /// # Jwk
@@ -194,61 +191,7 @@ impl JwkBuilder {
     }
 }
 
-/// # extract_es256_coordinates
-///
-/// Extracts the elliptic curve coordinates (`x` and `y`) from an EC (Elliptic Curve) key
-/// in JWK format, specifically for the ES256 algorithm (P-256 curve).
-/// This function assumes the key is an EC key and retrieves the necessary components
-/// for further processing.
-///
-/// ## Parameters:
-/// - `pem_data`: The `pem_data` object representing the EC key.
-///
-/// ## Returns:
-/// - `Result<(String, String), JwkError>`: A tuple containing the `x` and `y` coordinates.
-///   Returns an error if the JWK is not valid or does not contain the required components.
-pub fn extract_es256_coordinates(pem_data: &str) -> Result<(String, String), JwkError> {
-    let public_key = PublicKey::from_public_key_pem(&pem_data)
-        .map_err(|_| JwkError::MissingEcParams)?;
 
-    let encoded_point = public_key.to_encoded_point(false);
-    let x = encoded_point.x().ok_or(JwkError::MissingEcX)?;
-    let y = encoded_point.y().ok_or(JwkError::MissingEcY)?;
-
-    let x_b64 = URL_SAFE_NO_PAD.encode(x);
-    let y_b64 = URL_SAFE_NO_PAD.encode(y);
-
-    Ok((x_b64, y_b64))
-}
-
-/// # extract_rsa_n_e
-///
-/// Extracts the RSA modulus (`n`) and exponent (`e`) from an RSA key in JWK format.
-/// This function assumes the key is an RSA key and retrieves the necessary components
-/// for signing or verification operations.
-///
-/// ## Parameters:
-/// - `pem_data`: The `pem_data` object representing the RSA key.
-///
-/// ## Returns:
-/// - `Result<(String, String), JwkError>`: A tuple containing the modulus (`n`) and exponent (`e`).
-///   Returns an error if the JWK is not valid or does not contain the required components.
-pub fn extract_rsa_n_e(pem_data: &str) -> Result<(String, String), JwkError> {
-    let public_key = RsaPublicKey::from_public_key_pem(&pem_data)
-        .map_err(|_| JwkError::MissingRsaParams)?;
-
-    let n = public_key.n().to_bytes_be();
-    let e = public_key.e().to_bytes_be();
-
-    if n.is_empty() || e.is_empty() {
-        return Err(JwkError::MissingRsaParams);
-    }
-
-    let n_b64 = URL_SAFE_NO_PAD.encode(n);
-    let e_b64 = URL_SAFE_NO_PAD.encode(e);
-
-    Ok((n_b64, e_b64))
-}
 
 /// # create_jwks
 ///

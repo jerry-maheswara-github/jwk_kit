@@ -3,7 +3,8 @@ mod tests {
     use std::fs;
     use std::path::Path;
     use jwk_kit::error::JwkError;
-    use jwk_kit::jwk::{extract_es256_coordinates, extract_rsa_n_e};
+    use jwk_kit::generator::ecdsa::extract_es256_coordinates;
+    use jwk_kit::generator::rsa::extract_rsa_n_e;
 
     #[test]
     fn test_extract_es256_coordinates_success() {
