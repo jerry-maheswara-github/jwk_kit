@@ -1,0 +1,23 @@
+[package]
+name = "jwk_kit"
+version = "0.1.0"
+edition = "2024"
+authors = ["Jerry Maheswara  <jerrymaheswara@gmail.com>"]
+description = "A lightweight Rust library to parse, validate, and manage JSON Web Keys (JWK) for web services and JWT-based authentication."
+license = "MIT"
+repository = "https://github.com/jerry-maheswara-github/jwk_kit"
+homepage = "https://github.com/jerry-maheswara-github/jwk_kit"
+documentation = "https://docs.rs/jwk_kit"
+readme = "README.md"
+keywords = ["jwk", "jwt", "crypto", "json", "web"]
+categories = ["authentication", "cryptography", "web-programming"]
+exclude = ["/.github", "/.gitignore", "/.vscode", "/target"]
+
+[dependencies]
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+thiserror = "2.0.12"
+base64 = "0.22.1"
+rsa = "0.9.8"
+p256 = "0.13.2"
+rand_core = "0.9.3"
