@@ -1,5 +1,5 @@
 use jwk_kit::error::JwkError;
-use jwk_kit::cryptography::rsa::generate_rsa_keypair_pem;
+use jwk_kit::generator::rsa::generate_rsa_keypair_pem;
 use std::fs::write;
 
 fn main() -> Result<(), JwkError> {

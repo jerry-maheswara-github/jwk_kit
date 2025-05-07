@@ -1,5 +1,5 @@
-use jwk_kit::cryptography::rsa::generate_rsa_keypair_pem;
-use jwk_kit::cryptography::ecdsa::generate_es256_keypair_pem;
+use jwk_kit::generator::rsa::generate_rsa_keypair_pem;
+use jwk_kit::generator::ecdsa::generate_es256_keypair_pem;
 
 #[test]
 fn test_generate_rsa_keypair_pem() {

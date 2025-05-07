@@ -1,5 +1,5 @@
 use jwk_kit::error::JwkError;
-use jwk_kit::cryptography::ecdsa::generate_es256_keypair_pem;
+use jwk_kit::generator::ecdsa::generate_es256_keypair_pem;
 use std::fs::write;
 
 fn main() -> Result<(), JwkError> {
