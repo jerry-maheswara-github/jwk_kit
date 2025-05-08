@@ -2,19 +2,22 @@
 
 ## 📚 Overview
 
-`jwk_kit` simplifies working with JSON Web Keys (JWK) in Rust by offering a clean, efficient API for key generation, serialization, and conversion.
+`jwk_kit` is a lightweight and modern Rust library for working with JSON Web Keys (JWK).
+It makes it easy to generate, manage, and serialize cryptographic keys in the JWK format.
 
-`jwk_kit` is a modern, lightweight, developer-friendly Rust library designed for generating, managing, and serializing JSON Web Keys (JWK). It provides an easy-to-use interface for handling cryptographic keys in the JWK format, widely used in securing APIs, OAuth2, JWT, and other authentication protocols.
+Designed with developers in mind, it offers a clean API and serves as a convenient
+alternative to the `openssl` command-line tool, enabling direct integration into Rust apps.
 
-`jwk_kit` is a programmatic alternative to using the `openssl` command-line tool, enabling direct integration into your Rust applications without the need for shelling out to external commands.
-
-Whether you're managing a JWKS endpoint or handling tokens in your auth layer, `jwk_kit` helps you stay compliant, secure, and productive.
+Whether you're managing a JWKS endpoint or handling tokens in your auth system,
+`jwk_kit` helps you stay secure, standards-compliant, and efficient.
 
 ---
 
 ## 🆚 Why Use `jwk_kit` Over `openssl` CLI?
 
-While `openssl` is a powerful tool for generating and working with cryptographic keys, it often requires external subprocess calls or manual interaction. `jwk_kit`, on the other hand, provides a **native Rust API** for working with JWKs, allowing you to automate and embed key generation and conversion directly into your applications.
+`openssl` is powerful but often needs external calls or manual steps.
+In contrast, `jwk_kit` offers a native Rust API to automate and embed
+key generation and JWK conversion directly into your application.
 
 ### 📌 Example:
 
@@ -28,12 +31,10 @@ openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out ec-access-pr
 openssl ec -in ec-access-private.pem -pubout -out ec-access-public.pem
 ```
 
-With `jwk_kit`, you can do it all programmatically in Rust, see [Usage Example](#-usage-example)
-
-This approach allows you to handle key generation and management entirely within your Rust application, without relying on shell commands.
-While in a CLI-based solution, you would still need external tools or commands to convert your keys into JWK format,
-with `jwk_kit`, the ability to generate, manage, and convert keys to the JWK format is built directly into your Rust application,
-streamlining the process and eliminating the need for additional external efforts.
+With `jwk_kit`, you can generate and manage keys entirely within your Rust app—no need for shell commands.
+Unlike CLI-based solutions that require external tools to convert keys to JWK,
+`jwk_kit` handles generation, management, and conversion natively,
+streamlining your workflow and removing external dependencies.
 
 ---
 
@@ -55,12 +56,12 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-jwk_kit = "0.1.0"
+jwk_kit = "0.1.1"
 ```
 
 ---
 
-## 🚀 Usage Example
+## 🚀 Quick Start
 
 ```rust
 use jwk_kit::generator::rsa::{extract_rsa_n_e, generate_rsa_keypair_pem};
@@ -74,57 +75,70 @@ fn main() -> Result<(), JwkError> {
     let (private_pem, public_pem) = generate_rsa_keypair_pem(2048)?;
     println!("RSA Private Key:\n{}", private_pem);
     println!("RSA Public Key:\n{}", public_pem);
-    
+
     // Save the RSA private key to a file named rsa-access-private.pem
     write("./examples/rsa/rsa-access-private.pem", &private_pem)
-    .map_err(|_| JwkError::PemWriteError)?;
+        .map_err(|_| JwkError::PemWriteError)?;
     println!("Private key saved to rsa-access-private.pem:\n{}", private_pem);
-    
+
     // Save the RSA public key to a file named rsa-access-public.pem
     write("./examples/rsa/rsa-access-public.pem", &public_pem)
-    .map_err(|_| JwkError::PemWriteError)?;
+        .map_err(|_| JwkError::PemWriteError)?;
     println!("Public key saved to rsa-access-public.pem:\n{}", public_pem);
-    
+
     // Extract the RSA modulus (n) and exponent (e) from the public key in PEM format
     let (n_b64, e_b64) = extract_rsa_n_e(&public_pem)?;
-    
+
     // Build a JWK (JSON Web Key) for the RSA key using the modulus and exponent
     let rsa_jwk = JwkBuilder::new("RSA")
-    .set_key_use("sig") 
-    .set_algorithm("RS256") 
-    .set_key_id("rsa-key-1") 
-    .set_modulus(&n_b64) 
-    .set_exponent(&e_b64) 
-    .build()?;
-    
+        .set_key_use("sig") 
+        .set_algorithm("RS256") 
+        .set_key_id("rsa-key-1") 
+        .set_modulus(&n_b64) 
+        .set_exponent(&e_b64) 
+        .build()?;
+
+    // ----------------------------------
     // Generate an ECDSA key pair (private and public keys) for ES256 (P-256 curve)
     let (private_pem, public_pem) = generate_es256_keypair_pem()?;
     println!("ECDSA Private Key:\n{}", private_pem);
     println!("ECDSA Public Key:\n{}", public_pem);
     
+    // Save the ECDSA private key to a file named ecdsa-access-private.pem
+    write("./examples/ecdsa/ecdsa-access-private.pem", &private_pem)
+        .map_err(|_| JwkError::PemWriteError)?;
+    println!("Private key saved to ecdsa-access-private.pem:\n{}", private_pem);
+
+    // Save the ECDSA public key to a file named ecdsa-access-public.pem
+    write("./examples/ecdsa/ecdsa-access-public.pem", &public_pem)
+        .map_err(|_| JwkError::PemWriteError)?;
+    println!("Public key saved to ecdsa-access-public.pem:\n{}", public_pem);
+
     // Extract the EC curve coordinates (x, y) from the public key in PEM format
     let (x, y) = extract_es256_coordinates(&public_pem)?;
-    
+
     // Build a JWK for the ECDSA key using the curve type (P-256) and coordinates (x, y)
     let ec_jwk = JwkBuilder::new("EC")
-    .set_key_use("sig") 
-    .set_algorithm("ES256") 
-    .set_key_id("ecdsa-key-1") 
-    .set_curve_type("P-256") 
-    .set_x_coordinate(&x) 
-    .set_y_coordinate(&y) 
-    .build()?;
-    
+        .set_key_use("sig") 
+        .set_algorithm("ES256") 
+        .set_key_id("ecdsa-key-1") 
+        .set_curve_type("P-256")  
+        .set_x_coordinate(&x) 
+        .set_y_coordinate(&y) 
+        .build()?;
+
+    // ----------------------------------
     // Create a JSON Web Key Set (JWKS) containing both the RSA and ECDSA keys
     let jwks = create_jwks(vec![rsa_jwk, ec_jwk]);
-    
+
     // Serialize the JWKS to a JSON string
     let jwks_json = serde_json::to_string_pretty(&jwks)
-    .map_err(|_| JwkError::UnsupportedKeyType("serialization failed".into()))?;
-    
-    // Print the resulting JWKS (containing both RSA and ECDSA keys) in a human-readable format
-    println!("JWKS:\n{}", jwks_json);
-    
+        .map_err(|_| JwkError::UnsupportedKeyType("serialization failed".into()))?;
+
+    // Print the JWKS (with RSA and ECDSA keys) in a readable format,
+    // or write it to `jwks.json` using `std::fs::write`.
+    println!("jwks.json \n{}", jwks_json);
+
     Ok(())
 }
 ```
@@ -164,10 +178,10 @@ If you find this crate useful, give it a ⭐ and share it with others in the Rus
 `jwk_kit` is designed to be fully compliant with the following IETF specifications:
 
 - [RFC 7517 - JSON Web Key (JWK)](https://datatracker.ietf.org/doc/html/rfc7517):
-Defines a JSON-based data structure for representing cryptographic keys, including both public and private key information.
+  Defines a JSON-based data structure for representing cryptographic keys, including both public and private key information.
 
 - [RFC 7518 - JSON Web Algorithms (JWA)](https://datatracker.ietf.org/doc/html/rfc7518):
-Specifies cryptographic algorithms and identifiers for use with JWKs, JWTs, and related technologies.
+  Specifies cryptographic algorithms and identifiers for use with JWKs, JWTs, and related technologies.
 
 These specifications ensure interoperability across different languages, platforms, and identity systems.
 The key generation, encoding, and serialization behaviors of `jwk_kit` are aligned with the structures and field requirements outlined in these RFCs.
