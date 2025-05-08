@@ -84,7 +84,6 @@ pub struct JwkBuilder {
 }
 
 impl JwkBuilder {
-    // Method setters tetap sama, mengembalikan &mut self
     pub fn new(kty: &str) -> Self {
         Self {
             kty: kty.to_string(),
@@ -162,7 +161,7 @@ impl JwkBuilder {
         }
 
         Ok(Jwk {
-            kty: self.kty.clone(),  // Need to clone here because `self` is a reference
+            kty: self.kty.clone(),
             use_: self.use_.clone(),
             alg: self.alg.clone(),
             kid: self.kid.clone(),
@@ -175,8 +174,6 @@ impl JwkBuilder {
         })
     }
 }
-
-
 
 /// # Creates a JSON Web Key Set (JWKS) from a collection of individual JWKs.
 ///

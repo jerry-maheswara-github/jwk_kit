@@ -5,8 +5,8 @@ use jwk_kit::jwk::{create_jwks, JwkBuilder};
 use jwk_kit::error::JwkError;
 
 fn main() -> Result<(), JwkError> {
-    // --- EC KEY ---
-    let ec_path = "./examples/ecdsa/ecdsa-rsa-access-public.pem";
+    // --- ECDSA KEY ---
+    let ec_path = "./examples/ecdsa/ecdsa-access-public.pem";
     let ec_pem_data = fs::read_to_string(ec_path).map_err(|_| JwkError::MissingEcParams)?;
 
     let (x, y) = extract_es256_coordinates(&ec_pem_data)?;

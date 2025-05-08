@@ -1,12 +1,11 @@
 [package]
 name = "jwk_kit"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Jerry Maheswara  <jerrymaheswara@gmail.com>"]
-description = "A lightweight Rust library to parse, validate, and manage JSON Web Keys (JWK) for web services and JWT-based authentication."
-license = "MIT"
+description = "A Rust Library for JSON Web Keys (JWK)"
+license = "Apache-2.0"
 repository = "https://github.com/jerry-maheswara-github/jwk_kit"
-homepage = "https://github.com/jerry-maheswara-github/jwk_kit"
 documentation = "https://docs.rs/jwk_kit"
 readme = "README.md"
 keywords = ["jwk", "jwt", "crypto", "json", "web"]

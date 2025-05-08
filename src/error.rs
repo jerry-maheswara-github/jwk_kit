@@ -41,5 +41,4 @@ pub enum JwkError {
 
     #[error("Invalid or unsupported curve type: {0}")]
     UnsupportedCurve(String),
-
 }

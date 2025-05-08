@@ -60,7 +60,6 @@ pub fn generate_es256_keypair_pem() -> Result<(String, String), JwkError> {
     Ok((private_pem, public_pem))
 }
 
-
 /// Extracts the EC coordinates (X and Y) from a PEM-encoded ES256 key.
 ///
 /// This function takes a PEM-encoded EC key and extracts the X and Y coordinates
@@ -98,7 +97,6 @@ pub fn generate_es256_keypair_pem() -> Result<(String, String), JwkError> {
 /// # Note
 /// This function is typically used to extract the public key coordinates from an ES256 key
 /// for use in a JWK format.
-
 pub fn extract_es256_coordinates(pem_data: &str) -> Result<(String, String), JwkError> {
     let public_key = PublicKey::from_public_key_pem(&pem_data)
         .map_err(|_| JwkError::MissingEcParams)?;
