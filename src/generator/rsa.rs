@@ -104,7 +104,7 @@ pub fn generate_rsa_keypair_pem(bits: usize) -> Result<(String, String), JwkErro
 /// This function is useful for extracting the public key components for RSA keys,
 /// particularly when generating a JWK for use in web-based authentication systems (e.g., JWT, OAuth).
 pub fn extract_rsa_n_e(pem_data: &str) -> Result<(String, String), JwkError> {
-    let public_key = RsaPublicKey::from_public_key_pem(&pem_data)
+    let public_key = RsaPublicKey::from_public_key_pem(pem_data)
         .map_err(|_| JwkError::MissingRsaParams)?;
 
     let n = public_key.n().to_bytes_be();

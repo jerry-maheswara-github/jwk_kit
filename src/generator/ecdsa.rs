@@ -98,7 +98,7 @@ pub fn generate_es256_keypair_pem() -> Result<(String, String), JwkError> {
 /// This function is typically used to extract the public key coordinates from an ES256 key
 /// for use in a JWK format.
 pub fn extract_es256_coordinates(pem_data: &str) -> Result<(String, String), JwkError> {
-    let public_key = PublicKey::from_public_key_pem(&pem_data)
+    let public_key = PublicKey::from_public_key_pem(pem_data)
         .map_err(|_| JwkError::MissingEcParams)?;
 
     let encoded_point = public_key.to_encoded_point(false);
